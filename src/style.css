@@ -29,6 +29,9 @@ body {
   text-align: center;
 }
 
+.confetti {
+  object-fit: cover;
+}
 
 .dice-container {
   display: grid;

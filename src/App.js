@@ -3,6 +3,7 @@ import './style.css';
 import Die from './components/Die'
 import Button from './components/Button';
 import {nanoid} from "nanoid"
+import Confetti from 'react-confetti'
 
 function App() {
 
@@ -20,15 +21,13 @@ function App() {
     let firstDie = dice[0]
     let validated = true
     for (let i = 0; i < dice.length;i++) {
-      console.log(!dice[i].isHeld)
-      console.log(dice[i].value)
-      console.log(firstDie.value)
-      console.log('----------')
       if (!dice[i].isHeld || dice[i].value !== firstDie.value) {
         validated = false
       }
     }
-    if (validated) console.log('Ganhouu')
+    if (validated) setTenzies(true)
+    else setTenzies(false)
+
   },[dice])
 
   function generateNewDie () {
@@ -47,14 +46,20 @@ function App() {
     return newDice
   }
   function rollDice () {
-    setDice(oldDice => oldDice.map(die => {
-      return die.isHeld ? 
-        die :
-        generateNewDie()
-    }))
+    if (!tenzies) {
+      setDice(oldDice => oldDice.map(die => {
+        return die.isHeld ? 
+          die :
+          generateNewDie()
+      }))
+    } else {
+      setTenzies(false)
+      setDice(allNewDice)
+    }
   }
 
   function holdDice (id) {
+   
     setDice(oldDice => oldDice.map(die => {
         return die.id === id ?
           {...die,isHeld: !die.isHeld} :
@@ -73,12 +78,20 @@ function App() {
   
   return (
     <main className="app">
+      {tenzies && <Confetti/>}
       <h1 className="title">Tenzies</h1>
-      <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+      <p className="instructions">
+        Roll until all dice are the same.
+        Click each die to freeze it at its
+        current value between rolls.
+      </p>
       <div className='dice-container'>
         {diceElements}
       </div>
-      <Button buttonText='Roll' handleClick={rollDice}/>
+      <Button 
+        buttonText={tenzies ? 'New game' : 'Roll'} 
+        handleClick={rollDice}
+      />
     </main>
   );
 }
